@@ -21,11 +21,18 @@ INSTANCE AsymmetricReliableBroadcast
 
 \* those assumptions are checked by TLC when it checks this file:
 ASSUME WellFormed
-ASSUME ConsensusCluster({p1,p2,p3})
-ASSUME ConsensusCluster({p3,p4})
+G1 == {p1,p2,p3}
+G2 == {p3,p4}
+ASSUME ConsensusCluster(G1)
+ASSUME ConsensusCluster(G2)
 ASSUME \neg ConsensusCluster(P)
 
-\* NOTE:
+\* NOTE that {p3,p4} is not a guild:
 ASSUME \neg Guild({p3,p4})
+
+\* Since the algorithm solves RB for G1 and G2 and they intersect, it should also solve it for G2 \cup G2:
+FullValidity == bcasterWB => <>(\A p \in P : delivered[p] = bcasterVal)
+FullAgreement ==
+    \A p,q \in P, v \in V : []((delivered[p] = v) => <>(delivered[q] = v))
 
 =====================================================================
